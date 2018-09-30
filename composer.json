@@ -1,0 +1,23 @@
+{
+    "name":"okvpn/datadog-orocrm",
+    "type":"symfony-bundle",
+    "license":"MIT",
+    "description": "OroCRM/OroPlatform Datadog integration",
+    "keywords": ["DogStatsD", "datadog-orocrm", "oro-platform"],
+    "authors": [
+        {
+            "name": "Uladzimir Tsykun",
+            "homepage": "https://github.com/vtsykun",
+            "email": "vtsykun@okvpn.org"
+        }
+    ],
+    "autoload":{
+        "psr-4":{
+            "Okvpn\\Bridge\\DatadogStatsD\\": "src"
+        }
+    },
+    "require":{
+        "php":">=7.1",
+        "okvpn/datadog-symfony": "^0.1"
+    }
+}
