@@ -1,0 +1,5 @@
+services:
+    okvpn_datadog_bridge.artifact_storage:
+        class: Okvpn\Bridge\OroDatadogBundle\Services\ArtifactsStorageUrlDecorator
+        arguments: ['@okvpn_datadog_bridge.artifact_storage.inner', '@service_container']
+        decorates: okvpn_datadog.logger.artifact_storage

@@ -1,0 +1,7 @@
+acls:
+    okvpn_datadog_api:
+        label: Use datadog api
+        description: Use datadog api
+        type: action
+        group_name: ""
+        category: "application"

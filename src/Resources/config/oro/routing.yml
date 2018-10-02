@@ -1,0 +1,14 @@
+okvpn_datadog_api:
+    resource:     "@OkvpnBridgeOroDatadogBundle/Controller/Api/Rest/DatadogController.php"
+    type:         rest
+    prefix:       api/rest/{version}/datadog/
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version:  latest
+
+okvpn_datadog_bundle:
+    resource:     "@OkvpnBridgeOroDatadogBundle/Controller"
+    type:         annotation
+    prefix:       /datadog

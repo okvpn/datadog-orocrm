@@ -1,0 +1,5 @@
+okvpn_datadog:
+    handle_exceptions:
+        skip_command:
+            - 'oro:message-queue:consume'
+    artifacts_path: '%kernel.root_dir%/import_export' # Reuse cron command to cleanup storage import directory
