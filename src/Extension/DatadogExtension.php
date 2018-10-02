@@ -20,7 +20,6 @@ class DatadogExtension extends AbstractExtension
     protected $container;
     protected $stopwatch;
     protected $pid;
-    private $t = 0;
 
     public function __construct(DogStatsInterface $statsd, ErrorBag $errorBag, ContainerInterface $container) //Inject only container into persistent service
     {
