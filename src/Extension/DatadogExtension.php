@@ -13,6 +13,19 @@ use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
+/**
+ * Profile message queue
+ * metrics provided by class:
+ *
+ *  - mq.messages.avg    - gives the avg processing time (in sec.) during the flush interval
+ *  - mq.messages.count  - gives the count of processed messages during the flush interval
+ *  - mq.messages.median - gives the median processing time in the flush interval
+ *  - mq.messages.95percentile - gives you the 95th percentile time in the flush interval
+ *  - mq.messages.max    - gives the max processing time sent during the flush interval
+ *  - mq.messages.min    - gives the min processing time sent during the flush interval
+ *  - mq.consumers       - gives count of running/active consumers
+ *  - mq.mem             - gives memory usage by all consumers.
+ */
 class DatadogExtension extends AbstractExtension
 {
     protected $statsd;
@@ -62,8 +75,8 @@ class DatadogExtension extends AbstractExtension
         }
 
         $this->statsd->timing('mq.messages', round($event->getDuration()/1000.0, 4), $tags);
-        $this->statsd->gauge('mq.mem', $event->getMemory());
-        $this->statsd->set('consumers', $this->pid);
+        $this->statsd->gauge('mq.mem', $event->getMemory(), ['pid:' . $this->pid]);
+        $this->statsd->set('mq.consumers', $this->pid);
 
         $this->flushError();
     }
@@ -73,7 +86,7 @@ class DatadogExtension extends AbstractExtension
      */
     public function onIdle(Context $context)
     {
-        $this->statsd->set('consumers', $this->pid);
+        $this->statsd->set('mq.consumers', $this->pid);
         $this->statsd->timing('mq.messages', 0, ['mq:idle']);
     }
 

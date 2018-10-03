@@ -7,6 +7,12 @@ namespace Okvpn\Bridge\OroDatadogBundle\Services;
 use Okvpn\Bundle\DatadogBundle\Logging\ArtifactsStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * UDP receive buffer size hardcoded in datadog agent, so not able to send a message
+ * larger than 8k. The large artifact will be saved locally.
+ *
+ * This decorator replace default code with url, to allow download artifact via http.
+ */
 class ArtifactsStorageUrlDecorator implements ArtifactsStorageInterface
 {
     private $artifactsStorage;
@@ -45,7 +51,7 @@ class ArtifactsStorageUrlDecorator implements ArtifactsStorageInterface
             $configManager = $this->container->get('oro_config.global');
             $uri = $this->container->get('router')->generate('okvpn_datadog_artifact', ['code' => $code]);
             return $configManager->get('oro_ui.application_url') . $uri;
-        } catch (\Exception $exception) {} //Skip, for example database is not available
+        } catch (\Exception $exception) {} //Skip, for example database is not available, etc
 
         return null;
     }

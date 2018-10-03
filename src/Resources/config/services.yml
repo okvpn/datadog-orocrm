@@ -3,3 +3,14 @@ services:
         class: Okvpn\Bridge\OroDatadogBundle\Services\ArtifactsStorageUrlDecorator
         arguments: ['@okvpn_datadog_bridge.artifact_storage.inner', '@service_container']
         decorates: okvpn_datadog.logger.artifact_storage
+        public: false
+
+    okvpn_datadog_bridge.logger.context_watcher:
+        class: Okvpn\Bridge\OroDatadogBundle\Logging\OroContextWatcher
+        arguments: ['@okvpn_datadog_bridge.logger.context_watcher.inner']
+        decorates: okvpn_datadog.logger.context_watcher
+        public: false
+        calls:
+            - [setTokenStorage, ['@security.token_storage']]
+            - [setConsumerState, ['@oro_message_queue.log.consumer_state']]
+            - [setTokenSerializer, ['@oro_security.token_serializer']]

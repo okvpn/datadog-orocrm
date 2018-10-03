@@ -18,7 +18,14 @@ use Symfony\Component\HttpFoundation\Request;
 class DatadogController extends FOSRestController
 {
     /**
-     * Throw test exception to test datadog send logs
+     * Throw test exception to test datadog send logs. <br>
+     * Example usage: Send simple exception
+     *
+     * <pre>
+     * {
+     *   "message": "Exception message",
+     *   "exception": "\\RuntimeException"
+     * }</pre>
      *
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response

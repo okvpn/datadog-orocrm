@@ -9,13 +9,16 @@ use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
+/**
+ * Download artifact via http. See Okvpn\Bridge\OroDatadogBundle\Services\ArtifactsStorageUrlDecorator
+ */
 class ArtifactsController extends Controller
 {
     /**
      * @Route(
      *     "/artifact/{code}",
      *     name="okvpn_datadog_artifact",
-     *     requirements={"code"="[a-f0-9]+"}
+     *     requirements={"code"="[a-f0-9]{40}"}
      * )
      * @AclAncestor("okvpn_datadog_api")
      * @param string $code
