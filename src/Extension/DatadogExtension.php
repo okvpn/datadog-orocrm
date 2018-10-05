@@ -88,7 +88,7 @@ class DatadogExtension extends AbstractExtension
         }
 
         $this->statsd->timing('mq.messages', round($event->getDuration()/1000.0, 4), $tags);
-        $this->statsd->gauge('mq.mem', $event->getMemory()/1048576, ['pid:' . $this->number]);
+        $this->statsd->gauge('mq.mem', (int) $event->getMemory()/1048576, ['pid:' . $this->number]);
         $this->statsd->set('mq.consumers', $this->pid);
 
         $this->flushError();
@@ -101,7 +101,7 @@ class DatadogExtension extends AbstractExtension
     {
         $this->statsd->set('mq.consumers', $this->pid);
         $this->statsd->timing('mq.messages', 0, ['mq:idle']);
-        $this->statsd->gauge('mq.mem', memory_get_usage(true)/1048576, ['pid:' . $this->number]);
+        $this->statsd->gauge('mq.mem', (int) memory_get_usage(true)/1048576, ['pid:' . $this->number]);
     }
 
     /**
