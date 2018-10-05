@@ -14,3 +14,7 @@ services:
             - [setTokenStorage, ['@security.token_storage']]
             - [setConsumerState, ['@oro_message_queue.log.consumer_state']]
             - [setTokenSerializer, ['@oro_security.token_serializer']]
+
+    okvpn_datadog_bridge.consumer.num_guesser:
+        class: Okvpn\Bridge\OroDatadogBundle\Services\SupervisorNumGuesser
+        public: false

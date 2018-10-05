@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Okvpn\Bridge\OroDatadogBundle\Extension;
 
+use Okvpn\Bridge\OroDatadogBundle\Services\ConsumerNumGuesserInterface;
 use Okvpn\Bundle\DatadogBundle\Client\DogStatsInterface;
 use Okvpn\Bundle\DatadogBundle\Logging\ErrorBag;
 use Oro\Component\MessageQueue\Client\Config;
@@ -33,14 +34,26 @@ class DatadogExtension extends AbstractExtension
     protected $container;
     protected $stopwatch;
     protected $pid;
+    protected $numGuesser;
+    protected $number;
 
-    public function __construct(DogStatsInterface $statsd, ErrorBag $errorBag, ContainerInterface $container) //Inject only container into persistent service
+    public function __construct(DogStatsInterface $statsd, ErrorBag $errorBag, ConsumerNumGuesserInterface $numGuesser,  ContainerInterface $container) //Inject only container into persistent service
     {
         $this->statsd = $statsd;
         $this->container = $container;
         $this->errorBag = $errorBag;
+        $this->numGuesser = $numGuesser;
         $this->pid = getmypid();
         $this->stopwatch = new Stopwatch();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function onStart(Context $context)
+    {
+        $number = $this->numGuesser->processNum();
+        $this->number = $number === null ? 0 : $number;
     }
 
     /**
@@ -75,7 +88,7 @@ class DatadogExtension extends AbstractExtension
         }
 
         $this->statsd->timing('mq.messages', round($event->getDuration()/1000.0, 4), $tags);
-        $this->statsd->gauge('mq.mem', $event->getMemory(), ['pid:' . $this->pid]);
+        $this->statsd->gauge('mq.mem', $event->getMemory()/1048576, ['pid:' . $this->number]);
         $this->statsd->set('mq.consumers', $this->pid);
 
         $this->flushError();
@@ -88,6 +101,7 @@ class DatadogExtension extends AbstractExtension
     {
         $this->statsd->set('mq.consumers', $this->pid);
         $this->statsd->timing('mq.messages', 0, ['mq:idle']);
+        $this->statsd->gauge('mq.mem', memory_get_usage(true)/1048576, ['pid:' . $this->number]);
     }
 
     /**

@@ -1,7 +1,7 @@
 services:
     okvpn_datadog_bridge.extension.datadog:
         class: Okvpn\Bridge\OroDatadogBundle\Extension\DatadogExtension
-        arguments: ['@okvpn_datadog.client', '@okvpn_datadog.error_bag', '@service_container']
+        arguments: ['@okvpn_datadog.client', '@okvpn_datadog.error_bag', '@okvpn_datadog_bridge.consumer.num_guesser', '@service_container']
         public: false
         tags:
             - { name: oro_message_queue.consumption.extension, persistent: true, priority: 10 }
