@@ -3,3 +3,7 @@ okvpn_datadog:
         skip_command:
             - 'oro:message-queue:consume'
     artifacts_path: '%artifacts_path%'
+
+oro_message_queue:
+    persistent_services:
+        - 'okvpn_datadog.error_bag'
