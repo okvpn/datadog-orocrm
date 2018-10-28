@@ -61,6 +61,7 @@ class DatadogExtension extends AbstractExtension
      */
     public function onPreReceived(Context $context)
     {
+        $this->stopwatch = new Stopwatch();
         $this->stopwatch->start('message_received');
     }
 
@@ -70,7 +71,7 @@ class DatadogExtension extends AbstractExtension
     public function onPostReceived(Context $context)
     {
         $event = $this->stopwatch->stop('message_received');
-        $this->stopwatch->reset();
+        //$this->stopwatch->reset(); Since Symfony 3.4
 
         switch ($context->getStatus()) {
             case MessageProcessorInterface::ACK:
