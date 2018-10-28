@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Okvpn\Bridge\OroDatadogBundle\Logging;
 
 use Okvpn\Bundle\DatadogBundle\Logging\Watcher\ContextWatcherInterface;
-use Oro\Bundle\MessageQueueBundle\Log\ConsumerState;
 use Oro\Bundle\SecurityBundle\Authentication\TokenSerializerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -25,7 +24,7 @@ class OroContextWatcher implements ContextWatcherInterface
     private $tokenStorage;
 
     /**
-     * @var ConsumerState
+     * @var object
      */
     private $consumerState;
 
@@ -45,15 +44,15 @@ class OroContextWatcher implements ContextWatcherInterface
     /**
      * @param TokenStorageInterface $tokenStorage
      */
-    public function setTokenStorage(TokenStorageInterface $tokenStorage)
+    public function setTokenStorage(TokenStorageInterface $tokenStorage = null)
     {
         $this->tokenStorage = $tokenStorage;
     }
 
     /**
-     * @param ConsumerState $consumerState
+     * @param object|null $consumerState
      */
-    public function setConsumerState(ConsumerState $consumerState)
+    public function setConsumerState(/*ConsumerState*/ $consumerState = null)
     {
         $this->consumerState = $consumerState;
     }
@@ -61,7 +60,7 @@ class OroContextWatcher implements ContextWatcherInterface
     /**
      * @param TokenSerializerInterface $tokenSerializer
      */
-    public function setTokenSerializer(TokenSerializerInterface $tokenSerializer)
+    public function setTokenSerializer(TokenSerializerInterface $tokenSerializer = null)
     {
         $this->tokenSerializer = $tokenSerializer;
     }
