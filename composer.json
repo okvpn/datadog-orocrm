@@ -18,7 +18,7 @@
     },
     "require":{
         "php":">=7.1",
-        "okvpn/datadog-symfony": "^0.1",
+        "okvpn/datadog-symfony": "^0.2",
         "oro/platform": "^2.6|^3.0"
     }
 }

@@ -1,0 +1,37 @@
+language: php
+
+sudo: false
+
+cache:
+  directories:
+    - .autoconf
+    - $HOME/.composer
+
+branches:
+  only:
+    - master
+
+addons:
+  postgresql: "9.6"
+
+services:
+  - mysql
+  - postgresql
+
+matrix:
+  include:
+    - php: 7.1.20
+      env: DATABASE="postgresql" ORO_PLATFORM="3.1.0-beta"
+
+before_install:
+  - phpenv config-rm xdebug.ini || echo "xdebug not available"
+  - bash tests/run.sh before_install
+
+install:
+  - bash tests/run.sh install
+
+before_script:
+  - bash tests/run.sh before_script
+
+script:
+  - cd /tmp/platform; composer info | grep okvpn
