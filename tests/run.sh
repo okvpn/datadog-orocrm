@@ -1,23 +1,14 @@
 #!/bin/bash
 
+set -ex
 export DATABASE
 export ORO_PLATFORM
 
 STEP=$1
 
 case ${STEP} in
-    before_install)
-        if [ -d /tmp/platform ]; then
-            rm -rf /tmp/platform
-        fi
-        git clone -b ${ORO_PLATFORM} https://github.com/oroinc/platform-application.git /tmp/platform
-        composer config repositories.repo-test path ${PWD}
-    ;;
     install)
         pushd /tmp/platform
-        composer require --no-update "okvpn/datadog-orocrm:*"
-        composer update --no-interaction --no-suggest --prefer-dist
-        composer info | grep okvpn
 
         if [ -f app/console ]; then
             CONFIG_DIR=app/config
