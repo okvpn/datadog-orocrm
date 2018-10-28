@@ -3,6 +3,8 @@
 OroPlatform [Datadog][1] integration, that bases on [Symfony datadog bundle][4] to monitor and track for application 
 errors and send notifications about them.
 
+[![Build Status](https://travis-ci.org/okvpn/datadog-orocrm.svg?branch=master)](https://travis-ci.org/okvpn/datadog-orocrm) [![Latest Stable Version](https://poser.pugx.org/okvpn/datadog-orocrm/v/stable)](https://packagist.org/packages/okvpn/datadog-orocrm) [![Latest Unstable Version](https://poser.pugx.org/okvpn/datadog-orocrm/v/unstable)](https://packagist.org/packages/okvpn/datadog-orocrm) [![Total Downloads](https://poser.pugx.org/okvpn/datadog-orocrm/downloads)](https://packagist.org/packages/okvpn/datadog-orocrm) [![License](https://poser.pugx.org/okvpn/datadog-orocrm/license)](https://packagist.org/packages/okvpn/datadog-orocrm)
+
 ## Benefits
 
 Use datadog bundle for:
