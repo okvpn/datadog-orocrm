@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * @NamePrefix("oro_api_")
+ * @NamePrefix("oro_api_datadog_")
  */
 class DatadogController extends FOSRestController
 {
