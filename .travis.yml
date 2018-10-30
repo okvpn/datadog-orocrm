@@ -15,12 +15,15 @@ services:
   - mysql
   - postgresql
 
+addons:
+  postgresql: "9.5"
+
 matrix:
   include:
     - php: 7.1.20
-      env: DATABASE="postgresql" ORO_PLATFORM="3.1.0-beta"
-    - php: 7.1
       env: DATABASE="mysql" ORO_PLATFORM="2.6.30"
+    - php: 7.1.20
+      env: DATABASE="postgresql" ORO_PLATFORM="3.1.0-beta"
 
 before_install:
   - phpenv config-rm xdebug.ini || echo "xdebug not available"
@@ -36,14 +39,69 @@ install:
       cp tests/phpunit.xml.dist /tmp/platform/phpunit.xml
       cp tests/config_test.yml /tmp/platform/config
     fi
-  - composer config repositories.repo-test path ${PWD} --working-dir=/tmp/platform
-  - composer require --no-update "okvpn/datadog-orocrm:*" --working-dir=/tmp/platform
-  - composer update --no-interaction --no-suggest --prefer-dist --working-dir=/tmp/platform
-  - composer info --working-dir=/tmp/platform | grep okvpn
-  - bash tests/run.sh install
+
+  # Travis sandbox have memory limit 3GB, but composer use 4GB.
+  # Install dependencies into tmp dir and merge two composer.lock
+  # Because OroPlatform is not installable by composer!!!
+  - mkdir -p /tmp/test
+  - |
+    composer init --working-dir=/tmp/test --no-interaction && \
+    composer config minimum-stability dev --working-dir=/tmp/test && \
+    composer config prefer-stable true --working-dir=/tmp/test && \
+    composer require --no-update "okvpn/datadog-orocrm:*" --working-dir=/tmp/test && \
+    sed -i -e 's/datadog-orocrm/datadog-test-orocrm/g' composer.json && \
+    sed -i -e 's/datadog-orocrm/datadog-test-orocrm/g' /tmp/test/composer.json && \
+    composer config repositories.repo-test path ${PWD} --working-dir=/tmp/test
+  - composer remove --no-update "oro/platform"
+  - composer update --no-interaction --no-suggest --prefer-dist --working-dir=/tmp/test
+  - php tests/lock-merger.php /tmp/test/composer.lock /tmp/platform/composer.lock
+  - pushd /tmp/platform
+  - |
+    if [ -f app/console ]; then
+      CONFIG_DIR=app/config
+    elif [ -f bin/console ]; then
+      CONFIG_DIR=config
+    else
+      echo "Not found symfony project"
+      exit 1
+    fi
+    cp "$CONFIG_DIR/parameters_test.yml.dist" "$CONFIG_DIR/parameters_test.yml"
+    sed -i "s/message_queue_transport"\:".*/message_queue_transport"\:" dbal/g" "$CONFIG_DIR/parameters_test.yml"
+    sed -i "s/message_queue_transport_config"\:".*/message_queue_transport_config"\:" ~/g" "$CONFIG_DIR/parameters_test.yml"
+    case ${DATABASE} in
+      mysql)
+        mysql -u root -e "create database IF NOT EXISTS okvpn";
+        find "$CONFIG_DIR" -type f -name 'parameters_test.yml' -exec sed -i "s/database_driver"\:".*/database_driver"\:" pdo_mysql/g; s/database_name"\:".*/database_name"\:" okvpn/g; s/database_user"\:".*/database_user"\:" root/g; s/database_password"\:".*/database_password"\:" ~/g; s/mailer_transport"\:".*/mailer_transport"\:" null/g;" {} \;
+      ;;
+      postgresql)
+        psql -U postgres -c "CREATE DATABASE okvpn;";
+        psql -U postgres -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";' -d okvpn;
+        find "$CONFIG_DIR" -type f -name 'parameters_test.yml' -exec sed -i "s/database_driver"\:".*/database_driver"\:" pdo_pgsql/g; s/database_name"\:".*/database_name"\:" okvpn/g; s/database_user"\:".*/database_user"\:" postgres/g; s/database_password"\:".*/database_password"\:" ~/g; s/mailer_transport"\:".*/mailer_transport"\:" null/g;" {} \;
+      ;;
+    esac
+  - composer install --no-interaction --no-suggest --prefer-dist
+  - popd
 
 before_script:
-  - bash tests/run.sh before_script
+  - pushd /tmp/platform
+  - |
+    if [ -f app/console ]; then
+      APP_BIN=app/console
+    elif [ -f bin/console ]; then
+      APP_BIN=bin/console
+    else
+      echo "Not found symfony project"
+      exit 1
+    fi
+    START=`date +%s`
+    php ${APP_BIN} oro:install --env test  --user-name=admin \
+      --user-email=admin@example.com --user-firstname=John --user-lastname=Doe --user-password=admin \
+      --sample-data=n --organization-name=OroCRM --no-interaction --application-url="http://localhost/" \
+      --skip-assets --timeout 600;
+    END=`date +%s`
+    SECONDS=$(($END-$START))
+    echo "Installation time - $(($SECONDS/60)) minutes $(($SECONDS%60)) seconds"
+  - popd
 
 script:
   - cd /tmp/platform
