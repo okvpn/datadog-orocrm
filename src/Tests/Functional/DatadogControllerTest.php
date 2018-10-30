@@ -8,6 +8,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class DatadogControllerTest extends WebTestCase
 {
+    private $isFirstRun = true;
+
     /**
      * {@inheritdoc}
      */
@@ -15,6 +17,9 @@ class DatadogControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateWsseAuthHeader());
         $this->client->useHashNavigation(true);
+        if (true === $this->isFirstRun) {
+            $this->client->getContainer()->get('okvpn_datadog.logger')->clearDeduplicationStore();
+        }
     }
 
     public function testLogException()
@@ -53,7 +58,7 @@ class DatadogControllerTest extends WebTestCase
     {
         $this->client->request('GET', $this->getUrl('oro_api_datadog_deduplication'));
         $response = self::getJsonResponseContent($this->client->getResponse(), 200);
-        self::assertCount(1, $response);
+        self::assertCount(1, $response, json_encode($response));
         self::assertContains('Test exception', $response[0]);
 
         $this->client->request('POST', $this->getUrl('oro_api_datadog_clear'));

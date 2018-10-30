@@ -29,6 +29,7 @@
     <testsuites>
         <testsuite name="functional">
             <directory suffix="Test.php">vendor/okvpn/datadog-orocrm/src/Tests/Functional</directory>
+            <directory suffix="Test.php">vendor/okvpn/datadog-test-orocrm/src/Tests/Functional</directory>
         </testsuite>
     </testsuites>
     <php>
