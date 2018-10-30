@@ -8,7 +8,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class DatadogControllerTest extends WebTestCase
 {
-    private $isFirstRun = true;
+    private static $isFirstRun = true;
 
     /**
      * {@inheritdoc}
@@ -17,7 +17,8 @@ class DatadogControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateWsseAuthHeader());
         $this->client->useHashNavigation(true);
-        if (true === $this->isFirstRun) {
+        if (true === self::$isFirstRun) {
+            self::$isFirstRun = false;
             $this->client->getContainer()->get('okvpn_datadog.logger')->clearDeduplicationStore();
         }
     }
