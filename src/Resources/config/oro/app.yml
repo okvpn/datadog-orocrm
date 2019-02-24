@@ -7,3 +7,10 @@ okvpn_datadog:
 oro_message_queue:
     persistent_services:
         - 'okvpn_datadog.error_bag'
+
+security:
+    firewalls:
+        datadog_api:
+            pattern:   ^/datadog/artifact/(\w+)/jira$
+            provider:   chain_provider
+            anonymous:  true

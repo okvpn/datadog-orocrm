@@ -1,3 +1,6 @@
+parameters:
+    datadog.jira_secret: ~
+
 services:
     okvpn_datadog_bridge.artifact_storage:
         class: Okvpn\Bridge\OroDatadogBundle\Services\ArtifactsStorageUrlDecorator
