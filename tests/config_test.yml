@@ -47,9 +47,6 @@ swiftmailer:
     logging: true
     disable_delivery: true
 
-oro_require_js:
-    js_engine: ~
-
 okvpn_datadog:
     profiling: true
     namespace: orocrm

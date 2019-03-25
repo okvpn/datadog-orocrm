@@ -28,7 +28,6 @@ matrix:
 before_install:
   - phpenv config-rm xdebug.ini || echo "xdebug not available"
   - phpenv config-add travis.php.ini
-  - nvm install 0.12
 
 install:
   - git clone -b ${ORO_PLATFORM} https://github.com/oroinc/platform-application.git /tmp/platform
